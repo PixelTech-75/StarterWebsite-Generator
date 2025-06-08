@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Starter Website Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+  <style>
+    body { font-family: system-ui,sans-serif; background: #15161b; color: #f2f2f2; margin: 0; }
+    .container {
+      max-width: 1100px; margin: 2rem auto; padding: 2rem;
+      background: #1a1a22; border-radius: 1.5rem; box-shadow: 0 8px 32px rgba(20,20,30,0.4);
+    }
+    h1 { text-align: center; letter-spacing: 2px; color: #fff; text-shadow: 0 0 16px #f00c, 0 1px 1px #222; margin-bottom: 0.7em; }
+    .project-desc {
+      margin: 1.5em auto 0.5em auto; max-width: 670px; color: #fbcaca; background: #251719;
+      padding: 1.1em 1.7em; border-radius: 0.8em; text-align: center; font-size: 1.13em; line-height: 1.7;
+      box-shadow: 0 4px 20px #f00a2b18; border: 1.5px solid #2d0707;
+    }
+    .center-btn-row { display: flex; justify-content: center; align-items: center; margin: 2rem 0 1.2rem 0; }
+    #generateBtn {
+      background: #2d0707; box-shadow: 0 0 12px 3px #ff2828b0, 0 2px 24px 2px #b10000cc, 0 0 18px 5px #ff282855;
+      border: 1.5px solid #ff4343; color: #fff; font-weight: bold; animation: pulse-red 1.6s infinite alternate;
+      padding: 1em 2.5em; font-size: 1.25em; border-radius: 2em; border: none; cursor: pointer; transition: background .2s, box-shadow .2s; margin: 0; display: block;
+    }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 16px 1px #ff282860, 0 2px 14px #b10000cc; }
+      100% { box-shadow: 0 0 32px 5px #ff282899, 0 2px 32px #ff4343cc; }
+    }
+    #generateBtn:hover { background: #480909; }
+    .right-btn-row { display: flex; justify-content: flex-end; align-items: center; margin: 0; gap: 0.5em; }
+    .copy-btn, .download-btn {
+      padding: 0.36em 1.5em; font-size: 1em; height: 2.35em; line-height: 1.0; box-shadow: none; border-radius: 1.5em;
+      background: #23232b; border: 1.2px solid #ff2828; color: #fff; transition: background 0.2s, color 0.2s;
+      cursor: pointer; display: flex; align-items: center;
+    }
+    .copy-btn.copied { background: #31c481; color: #fff; border: 1.2px solid #31c481; }
+    .download-btn { border: 1.2px solid #31c4ff; background: #232b33; color: #b8eaff; margin-left: 0; }
+    .download-btn:active, .download-btn:focus, .download-btn:hover { background: #173a4a; color: #fff; }
+    .label-row { display: flex; align-items: center; justify-content: space-between; margin-top: 2em; margin-bottom: 0; gap: 0.5em; }
+    label {
+      font-weight: bold; color: #f05a5a; letter-spacing: 1px; margin: 0; padding: 0;
+      display: block; line-height: 2.35em; font-size: 1.08em;
+    }
+    .code-block-container { position: relative; width: 100%; }
+    pre.prism-block {
+      margin: 1em 0 0.5em 0 !important; padding: 1em !important; border-radius: 7px !important;
+      background: #23272f !important; color: #e0e6f0 !important; overflow-x: auto !important;
+      box-shadow: 0 2px 12px #1118; width: 100%; max-width: 100%; font-size: 1em;
+    }
+    code.language-html {
+      background: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important;
+      color: inherit !important; font-size: inherit !important; box-shadow: none !important; white-space: pre;
+      width: 100%; display: block;
+    }
+    #output { position: absolute; left: -9999px; top: 0; opacity: 0; pointer-events: none; height: 0; width: 0; }
+    .preview {
+      background: #23232b; border: 1px solid #333; min-height: 120px; border-radius: 0.7em; margin: 1em 0;
+      overflow-x: auto; box-shadow: 0 2px 18px #1a1a22b0;
+    }
+    .preview iframe { width: 100%; height: 640px; border: none; border-radius: 0.7em; background: #23232b; }
+
+    .disclaimer {
+      margin-top: 2.5em;
+      color: #ffbdbd;
+      background: #221314;
+      padding: 1em 1.5em;
+      border-radius: 0.7em;
+      font-size: 1em;
+      text-align: center;
+      letter-spacing: 0.05em;
+      border: 1px solid #442225;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 1px 12px #a22a2a33;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Random Starter Website Generator</h1>
+    <div class="project-desc">
+      Instantly generate unique and colorful website mockups with advanced random layouts, modern CSS art styles, and a variety of content.
+      Quickly copy and/or download the generated HTML code. Perfect for inspiration, prototyping, or testing your design ideas!
+    </div>
+    <div class="center-btn-row">
+      <button id="generateBtn">Generate Website</button>
+    </div>
+    <div class="label-row">
+      <label for="output">Generated HTML code:</label>
+      <div class="right-btn-row">
+        <button class="copy-btn" id="copyBtn" title="Copy HTML code to clipboard">Copy</button>
+        <button class="download-btn" id="downloadBtn" title="Download HTML file">Download</button>
+      </div>
+    </div>
+    <div class="code-block-container">
+      <textarea id="output" readonly></textarea>
+      <pre class="prism-block"><code id="highlighted" class="language-html"></code></pre>
+    </div>
+    <label>Live Preview:</label>
+    <div class="preview" id="preview"><iframe id="preview-iframe"></iframe></div>
+  </div>
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> Websites generated by this tool are for demonstration, prototyping, and educational purposes only. 
+    Images and data are randomly sourced and may not be suitable for production or commercial use.
+    Always review and customize generated code before deploying it to any live environment. Thank you.
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js"></script>
+  <script>
+    // --- Helper randomizers ---
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function randomInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+    function randomWords(n) {
+      const words = "solar vivid stream oceanic pixel dynamic lucid vital connect pulse leaf fusion nova quantum hex byte logic rapid glide tronic bolt fresh synth prime zetta flash vapor dusk neon vault hover logic path roam blend craft brave bright keen".split(' ');
+      let s = [];
+      for(let i=0;i<n;i++) s.push(pick(words));
+      return s.join(' ');
+    }
+    function randomName() {
+      const first = ["Alex","Sam","Jamie","Pat","Blake","Morgan","Sky","Taylor","Casey","Dee","Jordan","Riley","Cameron","Quinn","Avery","Jules","Kris"];
+      const last = ["Stone","Harper","Brooks","Parker","Reed","Frost","Lane","Rowe","Ellis","Wells","Flynn","Drew","Hayes","Lake","Knight"];
+      return pick(first)+" "+pick(last);
+    }
+    function randomCompany() {
+      const adjectives = ["Blue","Bright","Quantum","Urban","Nova","Sonic","Fresh","Next","Infinity","Solid","Cloud","Hyper","Prime","Lumen","Pulse"];
+      const nouns = ["Media","Foods","Labs","Tech","Works","Studios","Cloud","Soft","Stream","Logistics","Tours","Shop","Grid","Beat","Wave"];
+      return pick(adjectives)+" "+pick(nouns);
+    }
+    function randomImg(query, w=400, h=240) {
+      return `https://source.unsplash.com/${w}x${h}/?${encodeURIComponent(query)},${randomInt(1,1000)}`;
+    }
+    function randomAvatar() {
+      return `https://randomuser.me/api/portraits/${pick(["men","women"])}/${randomInt(10,80)}.jpg`;
+    }
+    function randomAccent() {
+      return `hsl(${randomInt(190,350)},${randomInt(50,80)}%,${randomInt(45,60)}%)`;
+    }
+    function randomGradient() {
+      return `linear-gradient(120deg, ${randomAccent()} 0%, ${randomAccent()} 100%)`;
+    }
+    function randomGlassBlur() {
+      return randomInt(6, 18) + "px";
+    }
+    function randomDate() {
+      const now = Date.now();
+      const past = now - 1000*60*60*24*randomInt(1, 365);
+      return new Date(past).toLocaleDateString();
+    }
+    function generateArtStyle() {
+      const accent = randomAccent();
+      const accent2 = randomAccent();
+      const font = pick(['"Inter",sans-serif','"Montserrat",sans-serif','"Poppins",sans-serif','"Roboto",sans-serif','"DM Sans",sans-serif']);
+      const glassBlur = randomGlassBlur();
+      const gradient = randomGradient();
+      return pick([
+        {
+          name: "Cyber Glassmorphism",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+            body { background: ${gradient}, url('https://www.transparenttextures.com/patterns/cubes.png'); font-family: ${font}; }
+            nav, header, .card, .main-header, .section-header, .user-card, .stat-block, .post, .album, .video { 
+              background: rgba(255,255,255,0.13);
+              backdrop-filter: blur(${glassBlur});
+              border-radius: 1.2em;
+              box-shadow: 0 8px 32px 0 rgba(31,38,135,0.13);
+              border: 1.5px solid rgba(255,255,255,0.22);
+            }
+            button, .action-btn { background: ${accent}; color: #fff; border-radius: 2em; font-weight: 600; border: none;}
+            a { color: ${accent2}; font-weight: 600;}
+            .main-header, h1, h2 { letter-spacing: 1.2px; }
+          `
+        },
+        {
+          name: "Animated Gradient Neon",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+            body {
+              background: linear-gradient(120deg, ${accent} 0%, ${accent2} 100%);
+              animation: gradientmove 8s ease-in-out infinite alternate;
+              font-family: 'Orbitron', ${font};
+            }
+            @keyframes gradientmove {
+              0% { background-position: left bottom; }
+              100% { background-position: right top; }
+            }
+            nav, .card, header, .album, .video, .post, .stat-block {
+              background: rgba(14,16,34,0.9);
+              border-radius: 1em;
+              box-shadow: 0 0 12px ${accent2}44;
+              color: #fff;
+            }
+            .main-header, .section-header, h2, h3 { color: ${accent}; text-shadow: 0 2px 12px ${accent2}44; }
+            button, .action-btn { background: ${accent2}; color: #fff; border-radius: 2em; border: none;}
+            a { color: #fff; text-decoration: underline; }
+          `
+        },
+        {
+          name: "Neubrutalism Layered",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&display=swap');
+            body { background: #f3f3f2; font-family: 'DM Sans',${font}; }
+            .card, .user-card, .album, .video, .stat-block, nav, header {
+              background: #fff;
+              border: 4px solid #222;
+              box-shadow: 8px 8px 0 #222, 0 4px 16px ${accent}22;
+              border-radius: 0.8em;
+            }
+            .main-header, .section-header, h2, h3 { color: #222; letter-spacing: 1.2px; }
+            button, .action-btn { background: ${accent}; color: #222; border-radius: 2em; border: 2.5px solid #222; box-shadow: 4px 4px 0 #222; }
+            a { color: ${accent2}; }
+            nav, header { background: #f7e18d; border-bottom: 4px solid #222; }
+          `
+        },
+        {
+          name: "Radial Dark Night",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,700;1,400&display=swap');
+            body { background: radial-gradient(circle at 55% 60%, ${accent} 0%, #0e1120 80%); color: #d6e1fa; font-family: 'Space Mono', monospace; }
+            .card, nav, header, .album, .video, .stat-block { background: #161b22cc; border-radius: 1em; border: 1px solid #262c3a; }
+            .main-header, .section-header, h2, h3 { color: ${accent2}; }
+            button, .action-btn { background: ${accent2}; color: #111; border-radius: 1.6em; border: none;}
+            a { color: ${accent}; text-decoration: underline; }
+          `
+        },
+        {
+          name: "Vibrant Paper Cut",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+            body {
+              background:
+                repeating-linear-gradient(-45deg, ${accent}, ${accent} 12px, ${accent2} 12px, ${accent2} 36px),
+                linear-gradient(120deg, #fff 60%, #f2f2f2 100%);
+                font-family: 'Pacifico', cursive;
+            }
+            .card, .album, .user-card, .stat-block, .post, nav, header {
+              background: #fff;
+              border-radius: 1.6em 0.6em 1.4em 0.8em / 1em 2em 0.8em 1.6em;
+              box-shadow: 0 8px 32px ${accent2}33;
+              border: 2px solid ${accent};
+              font-family: 'Pacifico', cursive;
+            }
+            .main-header, .section-header, h2, h3 { color: ${accent}; }
+            button, .action-btn { background: ${accent2}; color: #fff; border-radius: 1.5em; border: none;}
+            a { color: ${accent}; }
+          `
+        },
+        {
+          name: "SaaS Modern",
+          css: `
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            body { background: #f4f9fd; font-family: 'Inter',sans-serif; }
+            nav, header, .card, .album, .stat-block, .user-card, .post, .video {
+              background: #fff;
+              border-radius: 1em;
+              box-shadow: 0 4px 32px ${accent2}15;
+              border: none;
+            }
+            .main-header, .section-header, h2, h3 { color: ${accent}; }
+            button, .action-btn { background: ${accent}; color: #fff; border-radius: 2em; border: none;}
+            a { color: ${accent2}; }
+          `
+        }
+      ]);
+    }
+    const websiteTypes = [
+      {
+        name: "Food Delivery",
+        generator: () => {
+          const company = randomCompany();
+          const restSlogan = pick([
+            "Deliciously fast, delivered to your door.",
+            "Eat well, live happy.",
+            "The best bites in town.",
+            "Your cravings, our mission.",
+            "Order joy to your home."
+          ]);
+          const dishes = Array.from({length: 5}, (_,i) => ({
+            name: randomWords(randomInt(2,3)),
+            price: "$"+randomInt(7,26)+".99",
+            img: randomImg(pick(["pizza","burger","sushi","noodle","salad","taco","pasta","steak","dessert","wrap"]))
+          }));
+          return `
+            <nav style="display: flex;align-items: center;justify-content: space-between;padding:1em 2em;">
+              <span style="font-size:1.5em; font-weight:bold;">${company}<span style="font-size:0.7em;font-weight:normal;"> Delivery</span></span>
+              <div>
+                <a href="#">Menu</a>
+                <a href="#">Deals</a>
+                <a href="#">Cart</a>
+              </div>
+            </nav>
+            <header style="text-align:center;margin:2em 0 1.5em 0;">
+              <h2 class="main-header">${restSlogan}</h2>
+            </header>
+            <section>
+              <h3 class="section-header" style="margin-bottom:1em;">Popular Dishes</h3>
+              ${dishes.map(f=>`
+                <div class="card food-item" style="display:flex;align-items:center;gap:1em;padding:1em;margin-bottom:1em;">
+                  <img src="${f.img}" alt="${f.name}" style="width:90px;height:70px;object-fit:cover;border-radius:0.5em;">
+                  <div>
+                    <div style="font-weight:bold;font-size:1.1em;">${f.name}</div>
+                    <div style="color:#888;">${f.price}</div>
+                    <button class="action-btn" style="margin-top:0.5em;">Order</button>
+                  </div>
+                </div>
+              `).join('')}
+            </section>
+            <footer style="margin-top:3em;text-align:center;color:#aaa;">&copy; ${new Date().getFullYear()} ${company}</footer>
+          `;
+        }
+      },
+      {
+        name: "Personal Blog",
+        generator: () => {
+          const blogger = randomName();
+          const posts = Array.from({length: 3}, ()=>({
+            title: randomWords(randomInt(3, 7)),
+            date: randomDate(),
+            img: randomImg("blog,writing,article", 220, 110),
+            snippet: randomWords(randomInt(12, 22)) + "."
+          }));
+          return `
+            <nav style="display:flex;align-items:center;justify-content:space-between;padding:1em 2em;">
+              <span style="font-size:1.4em;font-weight:bold;">${blogger}</span>
+              <div>
+                <a href="#">Home</a>
+                <a href="#">About</a>
+              </div>
+            </nav>
+            <header style="margin:2em 0;text-align:center;">
+              <h2 class="main-header">${randomWords(4)}</h2>
+              <div style="color:#888;">${randomWords(5)}</div>
+            </header>
+            <section>
+              <h3 class="section-header" style="margin-bottom:1em;">Recent Posts</h3>
+              ${posts.map(p=>`
+                <div class="card" style="display:flex;gap:1em;padding:1em;margin-bottom:1.5em;">
+                  <img src="${p.img}" alt="${p.title}" style="width:110px;height:80px;object-fit:cover;border-radius:0.5em;">
+                  <div>
+                    <div style="font-size:1.15em;font-weight:600;">${p.title}</div>
+                    <div style="color:#888;font-size:0.9em;">${p.date}</div>
+                    <div style="margin-top:0.7em;">${p.snippet} <a href="#">Read more</a></div>
+                  </div>
+                </div>
+              `).join('')}
+            </section>
+          `;
+        }
+      }
+      // Add more types if you wish!
+    ];
+
+    let latestHTML = "";
+    let latestCSS = "";
+
+    function generateWebsite() {
+      const type = pick(websiteTypes);
+      const style = generateArtStyle();
+      const html = `<!-- Website type: ${type.name}, Art style: ${style.name} -->\n${type.generator()}`;
+      return { html, css: style.css, type: type.name, art: style.name };
+    }
+
+    function update() {
+      const { html, css } = generateWebsite();
+      latestHTML = html;
+      latestCSS = css;
+      document.getElementById("output").value = html;
+      const highlighted = Prism.highlight(html, Prism.languages.html, "html");
+      document.getElementById("highlighted").innerHTML = highlighted;
+
+      const iframe = document.getElementById("preview-iframe");
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      doc.open();
+      doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Preview</title>
+          <style>${css}</style>
+        </head>
+        <body>
+        ${html}
+        </body>
+        </html>
+      `);
+      doc.close();
+    }
+
+    document.getElementById("copyBtn").addEventListener("click", function() {
+      const textarea = document.getElementById("output");
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      try {
+        document.execCommand('copy');
+        this.classList.add('copied');
+        this.textContent = 'Copied!';
+        setTimeout(() => {
+          this.classList.remove('copied');
+          this.textContent = 'Copy';
+        }, 1200);
+      } catch (err) {
+        this.textContent = 'Failed';
+      }
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", function() {
+      const htmlFile =
+        "<!DOCTYPE html>\n<html>\n<head>\n" +
+        '  <meta charset="UTF-8">\n' +
+        "  <title>Random Website</title>\n" +
+        "  <style>\n" + latestCSS + "\n  </style>\n" +
+        "</head>\n<body>\n" + latestHTML + "\n</body>\n</html>";
+      const blob = new Blob([htmlFile], {type: "text/html"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "random-website.html";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 100);
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", update);
+    update();
+  </script>
+</body>
+</html>
